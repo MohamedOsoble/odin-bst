@@ -3,7 +3,6 @@ import Node from "./node.mjs";
 export default class BinarySearchTree{
     constructor(inputArray){
         this.root = this.buildTree(inputArray);
-        // this.prettyPrint(this.root);
     };
 
     buildTree(inputArray){
@@ -48,5 +47,55 @@ export default class BinarySearchTree{
             node.right = this.insert(value, node.right);
         }
         return node;
+    };
+
+    delete(value, node = this.root){
+        // find the node
+        let foundNode = this.findNode(value, node);
+        if(!foundNode){
+            return "Value not found in tree"
+        };
+        // check node has no children, if so, set the value to null
+        if(foundNode.left === null && foundNode.right === null){
+            foundNode.value = null
+            return foundNode;
+        }
+        // If the node has one child, child replaces node.
+        if(foundNode.left === null && foundNode.right != null){
+            foundNode = foundNode.right;
+            return foundNode;
+        }
+        else if(foundNode.right === null && foundNode.left != null){
+            foundNode = foundNode.left
+            return foundNode;
+        }
+        else{
+        // if the node has two children, send right node to find successor function
+            let successor = this.findSuccessor(foundNode.right);
+            foundNode.value = successor.value;
+            successor.value = null;
+            return foundNode;
+        };
+
+    };
+
+    findNode(value, node = this.root){
+        if(node.value === value){
+            return node;
+        }
+        if(value > node.value && node.right != null){
+            return this.findNode(value, node.right)
+        }
+        else if(value < node.value && node.left != null){
+            return this.findNode(value, node.left);
+        };
+        return null;
+    };
+
+    findSuccessor(node){
+        if(node.left === null){
+            return node;
+        };
+        return this.findSuccessor(node.left);
     };
 };

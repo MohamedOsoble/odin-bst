@@ -15,9 +15,11 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
   };
 
 const arr1 = Array.from({length: 40}, () => Math.floor(Math.random() * 40));
+arr1.push(12);
 const testTree = new BinarySearchTree(arr1);
-console.log(testTree.root);
+//console.log(testTree.root);
 testTree.insert(41);
 testTree.insert(7);
+console.log(testTree.delete(12));
 
 console.log(prettyPrint(testTree.root));
