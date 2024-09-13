@@ -18,8 +18,13 @@ const arr1 = Array.from({length: 40}, () => Math.floor(Math.random() * 40));
 arr1.push(12);
 const testTree = new BinarySearchTree(arr1);
 //console.log(testTree.root);
-testTree.insert(41);
+// testTree.insert(41);
 testTree.insert(7);
-console.log(testTree.delete(12));
+// console.log(testTree.delete(12));
 
 console.log(prettyPrint(testTree.root));
+// console.log(testTree.inOrder(console.log));
+// console.log(testTree.preOrder(console.log));
+// console.log(testTree.postOrder(console.log));
+console.log(testTree.height(7))
+console.log(testTree.isBalanced());

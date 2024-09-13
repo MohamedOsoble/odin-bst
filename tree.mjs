@@ -98,4 +98,106 @@ export default class BinarySearchTree{
         };
         return this.findSuccessor(node.left);
     };
+
+    levelOrder(callback){
+
+        if(!callback){
+            console.log("No callback function was passed")
+            return;
+        };
+
+        const queue = []
+        let node = this.root;
+        queue.push(node);
+
+        while(queue.length !== 0){
+            node = queue.shift();
+            callback(node.value);
+
+            // Add left side to the queue
+            if(node.left != null){
+                queue.push(node.left);
+            }
+
+            // Add right side to the queue
+            if(node.right != null){
+                queue.push(node.right);
+            }
+        };
+    };
+
+    inOrder(callback, node=this.root){
+        if(node == null){
+            return;
+        }
+        this.inOrder(callback, node.left);
+        callback(node.value);
+        this.inOrder(callback, node.right);
+    };
+
+    preOrder(callback, node=this.root){
+        if(node === null){
+            return;
+        }
+        callback(node.value);
+        this.preOrder(callback, node.left);
+        this.preOrder(callback, node.right);
+    };
+
+    postOrder(callback, node=this.root){
+        if(node === null){
+            return;
+        }
+        this.postOrder(callback, node.left);
+        this.postOrder(callback, node.right);
+        callback(node.value);
+    };
+
+    depth(value, node = this.root, i = 0){
+        i++
+        if(node.value === value){
+            return i;
+        }
+        if(value > node.value && node.right != null){
+            return this.depth(value, node.right, i)
+        }
+        else if(value < node.value && node.left != null){
+            return this.depth(value, node.left, i);
+        };
+        return null;
+    };
+
+    height(value, node = this.findNode(value), height = 0){
+        if(node.left === null && node.right === null){
+            return height;
+        }
+        height++
+        if(node.left != null){
+            var leftHeight = this.height(value, node.left, height)
+        }
+        if(node.right != null){
+            var rightHeight = this.height(value, node.right, height);
+        }
+        height = Math.max(leftHeight, rightHeight)
+        return height;
+    }
+    
+    isBalanced(root = this.root){
+
+        // Base case if root is null
+        if(root == null){
+            return true;
+        }
+        console.log(root.left.value, root.left);
+        console.log(root.right.value, root.right);
+
+        let lh = this.height(root.left.value, root.left);
+        let rh = this.height(root.right.value, root.right);
+        if(lh - rh <= 1){
+            return true;
+        };
+        console.log(lh, rh)
+        return false;
+    };
+
 };
