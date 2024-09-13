@@ -5,11 +5,18 @@ export default class BinarySearchTree{
         this.root = this.buildTree(inputArray);
     };
 
-    buildTree(inputArray){
+    buildTree(inputArray, sorted=false){
 
-        // Sort the array in order
-        const sortedArray = this.sortArray(inputArray);
-        return this.buildNodes(sortedArray, 0, sortedArray.length - 1);
+        // If array is not sorted, sort the array
+        let treeArray = []
+        if(!sorted){
+            treeArray = this.sortArray(inputArray);
+        }
+        else{
+            treeArray = inputArray;
+        };
+
+        return this.buildNodes(treeArray, 0, treeArray.length - 1);
 
     };
 
@@ -19,6 +26,8 @@ export default class BinarySearchTree{
         };
         const mid = Math.floor((start + end) / 2);
         const node = new Node(inputArray[mid])
+
+        // Build left nodes from beginning to middle of array, right nodes from middle to end
         node.left = this.buildNodes(inputArray, start, mid - 1);
         node.right = this.buildNodes(inputArray, mid + 1, end);
         return node;
@@ -34,12 +43,17 @@ export default class BinarySearchTree{
     };
 
     insert(value, node = this.root){
+        // Base case of no child, insert here
         if(node === null){
             return new Node(value);
         }
+
+        // If value already exist, don't insert, return node
         if(value === node.value){
             return node;
         }
+
+        // Recursively traverse the tree until empty node
         if(value < node.value){
             node.left = this.insert(value, node.left);
         }
@@ -80,18 +94,27 @@ export default class BinarySearchTree{
     };
 
     findNode(value, node = this.root){
+
+        // Base case, return node if value matches
         if(node.value === value){
             return node;
         }
+
+        // Go right if value is greater than current node and right is not null
         if(value > node.value && node.right != null){
             return this.findNode(value, node.right)
         }
+
+        // Go left is value is less than current node and left is not null
         else if(value < node.value && node.left != null){
             return this.findNode(value, node.left);
         };
+
+        // Return null if not found
         return null;
     };
 
+    // Helper function to keep going left until no leafs left
     findSuccessor(node){
         if(node.left === null){
             return node;
@@ -106,6 +129,7 @@ export default class BinarySearchTree{
             return;
         };
 
+        // Init queue and add current node
         const queue = []
         let node = this.root;
         queue.push(node);
@@ -126,6 +150,7 @@ export default class BinarySearchTree{
         };
     };
 
+    // Node traversal methods
     inOrder(callback, node=this.root){
         if(node == null){
             return;
@@ -153,6 +178,7 @@ export default class BinarySearchTree{
         callback(node.value);
     };
 
+    // Check depth from input value
     depth(value, node = this.root, i = 0){
         i++
         if(node.value === value){
@@ -167,37 +193,69 @@ export default class BinarySearchTree{
         return null;
     };
 
-    height(value, node = this.findNode(value), height = 0){
-        if(node.left === null && node.right === null){
+    height(node, height = 0){
+        // Check if it has any children, if not, return current height;
+        if(node.left == null && node.right == null){
             return height;
         }
-        height++
+        height ++
+        let leftHeight = 0;
+        let rightHeight = 0;
+        // Check left tree for children recursively
         if(node.left != null){
-            var leftHeight = this.height(value, node.left, height)
+            leftHeight = this.height(node.left, height);
         }
+        // Check right tree for children recursively
         if(node.right != null){
-            var rightHeight = this.height(value, node.right, height);
-        }
-        height = Math.max(leftHeight, rightHeight)
-        return height;
-    }
-    
+            rightHeight = this.height(node.right, height);
+        };
+        return Math.max(leftHeight, rightHeight);
+
+        // Compare right and left for longest path
+
+        // Return longest path
+    };
+
     isBalanced(root = this.root){
 
         // Base case if root is null
         if(root == null){
             return true;
         }
-        console.log(root.left.value, root.left);
-        console.log(root.right.value, root.right);
 
-        let lh = this.height(root.left.value, root.left);
-        let rh = this.height(root.right.value, root.right);
-        if(lh - rh <= 1){
+        // Compare left and right tree length
+        let lh = this.height(root.left);
+        let rh = this.height(root.right);
+
+        // If difference is less than 1, return true
+        if(lh - rh <= 1 && lh - rh >= -1){
             return true;
         };
-        console.log(lh, rh)
+
+        // Any other case would be unbalanced and return false
         return false;
+    };
+
+    // Helper function to return array with ordered items
+    inOrderTraversal(node, nodes) {
+        if (node === null) {
+          return;
+        }
+
+        this.inOrderTraversal(node.left, nodes);
+        nodes.push(node.value);
+        this.inOrderTraversal(node.right, nodes);
+      }
+
+    rebalance(){
+        // If tree is balanced, do nothing
+        if(this.isBalanced()){
+            return;
+        }
+        const treeArray = []
+        this.inOrderTraversal(this.root, treeArray);
+        this.root = this.buildTree(treeArray, true);
+        return this.root;
     };
 
 };
